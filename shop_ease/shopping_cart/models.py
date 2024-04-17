@@ -1,9 +1,9 @@
 import uuid
 from django.db import models
-from django.contrib.auth.models import AbstractBaseUser
+from django.contrib.auth.models import AbstractUser
 
 
-class User(AbstractBaseUser):
+class User(AbstractUser):
     first_name = models.CharField(
         max_length=50,
         null=False,
@@ -14,7 +14,7 @@ class User(AbstractBaseUser):
         null=False,
         blank=False,
     )
-    user_email = models.EmailField(unique=True)
+    email = models.EmailField(unique=True)
     user_id = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     phone_number = models.CharField(
         max_length=15,
@@ -25,7 +25,7 @@ class User(AbstractBaseUser):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f"User -> {self.user_email}"
+        return f"User -> {self.email}"
 
 
 class Product(models.Model):
