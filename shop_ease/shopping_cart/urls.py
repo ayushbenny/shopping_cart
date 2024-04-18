@@ -1,7 +1,10 @@
 from django.urls import path
 
-from shopping_cart.utils import CustomRefreshTokenObtainPairView, CustomTokenObtainPairView
-from shopping_cart.views import FetchUserAPIView, RegisterUserAPIView
+from shopping_cart.utils import (
+    CustomRefreshTokenObtainPairView,
+    CustomTokenObtainPairView,
+)
+from shopping_cart.views import ManageProductAPIView, ManageUserAPIView, RegisterUserAPIView
 
 
 urlpatterns = [
@@ -12,5 +15,6 @@ urlpatterns = [
         name="token_refresh",
     ),
     path("user/", RegisterUserAPIView.as_view(), name="register_user"),
-    path("fetch_user/", FetchUserAPIView.as_view(), name="fetch_user"),
+    path("api/user/", ManageUserAPIView.as_view(), name="fetch_user"),
+    path("api/product/", ManageProductAPIView.as_view(), name="manage_product"),
 ]
