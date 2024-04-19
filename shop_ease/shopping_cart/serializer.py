@@ -2,7 +2,7 @@ from rest_framework import serializers
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
 
-from shopping_cart.models import Product, User
+from shopping_cart.models import Order, Payment, Product, User
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -38,3 +38,16 @@ class ProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
         fields = ["id", "product_name", "description", "price", "is_delete"]
+
+
+class PaymentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Payment
+        fields = [
+            "id",
+            "order",
+            "payment_method",
+            "transaction_id",
+            "amount_paid",
+            "payment_status",
+        ]

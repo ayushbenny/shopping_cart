@@ -14,7 +14,6 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
 
 
 class CustomTokenObtainPairView(TokenObtainPairView):
-    print("enter here")
     serializer_class = CustomTokenObtainPairSerializer
 
 

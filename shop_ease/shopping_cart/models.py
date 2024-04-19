@@ -43,11 +43,14 @@ class Product(models.Model):
 class Order(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     products = models.ManyToManyField(Product, through="OrderItem")
+    total_price = models.DecimalField(
+        max_digits=10, decimal_places=2, null=True, blank=True
+    )
     created_at = models.DateTimeField(auto_now_add=True, null=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f"Order -> {self.user.user_email}"
+        return f"Order -> {self.user.email}"
 
 
 class OrderItem(models.Model):
@@ -59,3 +62,28 @@ class OrderItem(models.Model):
 
     def __str__(self):
         return f"OrderItem -> {self.product.product_name}"
+
+
+class Payment(models.Model):
+    PAYMENT_STATUS_CHOICES = (
+        ("Pending", "Pending"),
+        ("Completed", "Completed"),
+        ("Failed", "Failed"),
+    )
+    PAYMENT_METHOD_CHOICES = (
+        ("Credit Card", "Credit Card"),
+        ("Wire Transfer", "Wire Transfer"),
+        ("Net Banking", "Net Banking"),
+        ("UPI", "UPI"),
+    )
+
+    order = models.OneToOneField(Order, on_delete=models.CASCADE)
+    payment_method = models.CharField(max_length=20, choices=PAYMENT_METHOD_CHOICES)
+    transaction_id = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    amount_paid = models.DecimalField(max_digits=10, decimal_places=2)
+    payment_status = models.CharField(max_length=20, choices=PAYMENT_STATUS_CHOICES,default="Pending")
+    created_at = models.DateTimeField(auto_now_add=True, null=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"Payment for Order {self.order.id}"
