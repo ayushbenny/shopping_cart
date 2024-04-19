@@ -34,18 +34,24 @@ class ManageUserAPIView(APIView):
             return Response(user_serializer.data)
         return Response(status=status.HTTP_404_NOT_FOUND)
 
+    @transaction.atomic
     def put(self, request, *args, **kwargs):
         user_obj = get_object_or_404(User, email=request.user.email)
         user_serializer = UserSerializer(user_obj, data=request.data)
         if user_serializer.is_valid():
+            if "password" in request.data:
+                user_obj.set_password(request.data["password"])
             user_serializer.save()
             return Response(user_serializer.data)
         return Response(user_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    @transaction.atomic
     def patch(self, request, *args, **kwargs):
         user_obj = get_object_or_404(User, email=request.user.email)
         user_serializer = UserSerializer(user_obj, data=request.data, partial=True)
         if user_serializer.is_valid():
+            if "password" in request.data:
+                user_obj.set_password(request.data["password"])
             user_serializer.save()
             return Response(user_serializer.data)
         return Response(user_serializer.errors, status=status.HTTP_400_BAD_REQUEST)

@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from django.contrib.auth.hashers import make_password
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
 
@@ -32,6 +33,17 @@ class UserSerializer(serializers.ModelSerializer):
         except ValidationError as err:
             raise serializers.ValidationError({"password": err.messages})
         return user
+
+    def update(self, instance, validated_data):
+        if "password" in validated_data:
+            validated_data["password"] = make_password(validated_data["password"])
+            try:
+                validate_password(
+                    password=validated_data.get("password"), user=instance
+                )
+            except ValidationError as err:
+                raise serializers.ValidationError({"password": err.messages})
+        return super().update(instance, validated_data)
 
 
 class ProductSerializer(serializers.ModelSerializer):
