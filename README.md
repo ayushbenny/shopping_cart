@@ -47,7 +47,7 @@ poetry --version
 git clone https://github.com/ayushbenny/shopping_cart.git
 ```
 
-### Navigate to the project directory:
+### Navigate to the project root folder:
 
 ```bash
 cd shopping_cart
@@ -63,6 +63,12 @@ poetry install
 
 ```bash
 poetry shell
+```
+
+### Navigate to the project directory:
+
+```bash
+cd shop_ease
 ```
 
 ### Apply migrations to set up the database:
