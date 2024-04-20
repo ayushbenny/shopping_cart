@@ -19,6 +19,7 @@ To run this application, you'll need the following installed on your system:
 * Poetry (for managing dependencies)
 * Django
 * Django REST Framework
+* Draw.io Extension --> [Table Architecture](shop_ease/table_design)
 
 ## Installation
 
