@@ -14,6 +14,17 @@ from rest_framework.permissions import AllowAny
 
 
 class RegisterUserAPIView(APIView):
+    """
+    API endpoint for registering a new user.
+
+    This endpoint allows users to register with the system by providing
+    their user data. Upon successful registration, a new user is created
+    and their data is returned.
+
+    Methods:
+    - POST: Create a new user with provided data.
+    """
+
     authentication_classes = []
     permission_classes = [AllowAny]
 
@@ -27,7 +38,24 @@ class RegisterUserAPIView(APIView):
 
 
 class ManageUserAPIView(APIView):
+    """
+    API endpoint for managing user data.
+
+    This endpoint allows authenticated users to retrieve and update their own data.
+
+    Methods:
+    - GET: Retrieve the data of the currently authenticated user.
+    - PUT: Update the data of the currently authenticated user.
+    - PATCH: Partially update the data of the currently authenticated user.
+    """
+
     def get(self, request, *args, **kwargs):
+        """
+        Retrieve the data of the currently authenticated user.
+
+        Returns:
+        - Response: JSON response with the serialized user data.
+        """
         user_obj = get_object_or_404(User, email=request.user.email)
         if user_obj:
             user_serializer = UserSerializer(user_obj)
@@ -36,6 +64,14 @@ class ManageUserAPIView(APIView):
 
     @transaction.atomic
     def put(self, request, *args, **kwargs):
+        """
+        Update the data of the currently authenticated user.
+
+        This endpoint allows for updating the user's data entirely.
+
+        Returns:
+        - Response: JSON response with the updated user data.
+        """
         user_obj = get_object_or_404(User, email=request.user.email)
         user_serializer = UserSerializer(user_obj, data=request.data)
         if user_serializer.is_valid():
@@ -47,6 +83,14 @@ class ManageUserAPIView(APIView):
 
     @transaction.atomic
     def patch(self, request, *args, **kwargs):
+        """
+        Partially update the data of the currently authenticated user.
+
+        This endpoint allows for partially updating the user's data.
+
+        Returns:
+        - Response: JSON response with the partially updated user data.
+        """
         user_obj = get_object_or_404(User, email=request.user.email)
         user_serializer = UserSerializer(user_obj, data=request.data, partial=True)
         if user_serializer.is_valid():
@@ -58,11 +102,31 @@ class ManageUserAPIView(APIView):
 
 
 class ManageProductAPIView(APIView):
+    """
+    API endpoint for managing products.
+
+    This endpoint allows for creating, retrieving, updating, and partially updating products.
+
+    Methods:
+    - POST: Create a new product.
+    - GET: Retrieve products based on optional query parameters.
+    - PUT: Update an existing product entirely.
+    - PATCH: Partially update an existing product.
+    """
+
     authentication_classes = []
     permission_classes = [AllowAny]
 
     @transaction.atomic
     def post(self, request, *args, **kwargs):
+        """
+        Create a new product.
+
+        This endpoint allows for creating a new product by providing the necessary product data.
+
+        Returns:
+        - Response: JSON response with the created product data.
+        """
         request_body = request.data
         product_serializer = ProductSerializer(data=request_body)
         if product_serializer.is_valid():
@@ -71,6 +135,15 @@ class ManageProductAPIView(APIView):
         return Response(product_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def get(self, request, *args, **kwargs):
+        """
+        Retrieve products based on optional query parameters.
+
+        This endpoint allows for retrieving products based on various query parameters such as
+        product name, minimum price, and maximum price.
+
+        Returns:
+        - Response: JSON response with the list of products matching the criteria.
+        """
         product_name = request.GET.get("product_name", None)
         minimum_price = request.GET.get("minimum_price", None)
         maximum_price = request.GET.get("maximum_price", None)
@@ -92,6 +165,14 @@ class ManageProductAPIView(APIView):
 
     @transaction.atomic
     def put(self, request, *args, **kwargs):
+        """
+        Update an existing product entirely.
+
+        This endpoint allows for updating an existing product entirely with new data.
+
+        Returns:
+        - Response: JSON response with the updated product data.
+        """
         request_body = request.data
         product_obj = get_object_or_404(Product, id=request_body.get("id"))
         if product_obj:
@@ -108,6 +189,14 @@ class ManageProductAPIView(APIView):
 
     @transaction.atomic
     def patch(self, request, *args, **kwargs):
+        """
+        Partially update an existing product.
+
+        This endpoint allows for partially updating an existing product with new data.
+
+        Returns:
+        - Response: JSON response with the partially updated product data.
+        """
         request_body = request.data
         product_obj = get_object_or_404(Product, id=request_body.get("id"))
         if product_obj:
@@ -124,8 +213,27 @@ class ManageProductAPIView(APIView):
 
 
 class ManageOrderAPIView(APIView):
+    """
+    API endpoint for managing orders.
+
+    This endpoint allows users to create, retrieve, and update orders.
+
+    Methods:
+    - POST: Create a new order.
+    - GET: Retrieve orders for the authenticated user, optionally by order ID.
+    - PUT: Update an existing order.
+    """
+
     @transaction.atomic
     def post(self, request, *args, **kwargs):
+        """
+        Create a new order.
+
+        This endpoint allows authenticated users to create a new order by providing product IDs and quantities.
+
+        Returns:
+        - Response: JSON response indicating success or failure of the order creation.
+        """
         try:
             request_body = request.data
             order_obj = Order.objects.create(user=request.user)
@@ -154,6 +262,15 @@ class ManageOrderAPIView(APIView):
             )
 
     def get(self, request, *args, **kwargs):
+        """
+        Retrieve orders for the authenticated user, optionally by order ID.
+
+        This endpoint allows authenticated users to retrieve their orders. If an order ID is provided,
+        only the details of that specific order are returned.
+
+        Returns:
+        - Response: JSON response with order details.
+        """
         try:
             order_id = request.GET.get("order_id")
             if order_id is not None:
@@ -198,6 +315,14 @@ class ManageOrderAPIView(APIView):
 
     @transaction.atomic
     def put(self, request, *args, **kwargs):
+        """
+        Update an existing order.
+
+        This endpoint allows authenticated users to update an existing order by providing new product IDs and quantities.
+
+        Returns:
+        - Response: JSON response indicating success or failure of the order update.
+        """
         try:
             request_body = request.data
             order_obj = Order.objects.get(pk=request_body.get("order_id", None))
@@ -249,8 +374,27 @@ class ManageOrderAPIView(APIView):
 
 
 class ManagePurchaseAPIView(APIView):
+    """
+    API endpoint for managing purchases.
+
+    This endpoint allows users to create, retrieve, and update payments for orders.
+
+    Methods:
+    - POST: Create a new payment for an order.
+    - GET: Retrieve payments for orders, optionally by order ID.
+    - PUT: Update an existing payment for an order.
+    """
+
     @transaction.atomic
     def post(self, request, *args, **kwargs):
+        """
+        Create a new payment for an order.
+
+        This endpoint allows authenticated users to create a new payment for a specific order.
+
+        Returns:
+        - Response: JSON response indicating success or failure of the payment creation.
+        """
         try:
             request_body = request.data
             order_obj = Order.objects.get(id=request_body.get("order_id", None))
@@ -302,6 +446,15 @@ class ManagePurchaseAPIView(APIView):
             )
 
     def get(self, request, *args, **kwargs):
+        """
+        Retrieve payments for orders, optionally by order ID.
+
+        This endpoint allows authenticated users to retrieve payments for their orders.
+        If an order ID is provided, details of the payment for that specific order are returned.
+
+        Returns:
+        - Response: JSON response with payment details.
+        """
         try:
             order_id = request.GET.get("order_id")
             if order_id:
@@ -327,6 +480,14 @@ class ManagePurchaseAPIView(APIView):
             )
 
     def put(self, request, *args, **kwargs):
+        """
+        Update an existing payment for an order.
+
+        This endpoint allows authenticated users to update an existing payment for an order.
+
+        Returns:
+        - Response: JSON response indicating success or failure of the payment update.
+        """
         try:
             request_body = request.data
             order_obj = Order.objects.get(id=request_body.get("order_id", None))

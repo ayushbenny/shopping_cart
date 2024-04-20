@@ -8,7 +8,7 @@ from shopping_cart.models import Order, Payment, Product, User
 
 class UserSerializer(serializers.ModelSerializer):
     """
-    Serializer for User instance
+    Serializer for User model
     """
 
     class Meta:
@@ -47,12 +47,20 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class ProductSerializer(serializers.ModelSerializer):
+    """
+    Serializer for Product model
+    """
+
     class Meta:
         model = Product
         fields = ["id", "product_name", "description", "price", "is_delete"]
 
 
 class PaymentSerializer(serializers.ModelSerializer):
+    """
+    Serializer for Payment model
+    """
+
     class Meta:
         model = Payment
         fields = [
