@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "shopping cart"
+version = "0.1.0"
+description = "Shopping Cart Rest APIs"
+authors = ["Ayush"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = ">=3.10,<3.11.dev0"
+django = "^5.0.4"
+django-rest-framework = "^0.1.0"
+djangorestframework-simplejwt = "^5.3.1"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
